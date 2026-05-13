@@ -53,15 +53,22 @@ def morning_brief() -> None:
 
 # ---------- 盘后快照 (一张卡 = 全部股票) ----------
 
-def _zone_badge(vz: dict) -> str:
-    pos = vz.get("position", "")
+def _zone_badge(r: dict) -> str:
+    pos = r.get("zone_position", "")
     if pos == "in_zone":
-        return "✅在区间"
+        return f"✅ 已在区间 ({r['zone_low']}-{r['zone_high']})"
     if pos == "above_zone":
-        return f"⬆️高{vz.get('distance_pct', 0)}%"
+        return f"⬆️ 高{r.get('zone_distance_pct', 0)}% (区间 {r['zone_low']}-{r['zone_high']})"
     if pos == "below_zone":
-        return f"⬇️破{vz.get('distance_pct', 0)}%"
-    return "?"
+        return f"⬇️ 破位{r.get('zone_distance_pct', 0)}% (区间 {r['zone_low']}-{r['zone_high']})"
+    return "状态未知"
+
+
+def _trend_emoji(pct: float) -> str:
+    if pct >= 3: return "🚀"
+    if pct >= 0: return "🔺"
+    if pct >= -3: return "🔻"
+    return "📉"
 
 
 def _pct(v: float) -> str:
@@ -122,16 +129,18 @@ def daily_snapshot() -> None:
         feishu.send_text(f"⚠️ 盘后快照: 所有股票数据获取失败. {failures}")
         return
 
-    # ---- 表格 ----
+    # ---- 每只股票两行的紧凑布局 ----
     lines = []
-    lines.append("| 股票 | 收盘 | 涨跌 | 量比 | 分位 | 区间状态 |")
-    lines.append("|---|---|---|---|---|---|")
     for r in rows:
+        emoji = _trend_emoji(r["pct_change"])
         lines.append(
-            f"| {r['name']}({r['symbol']}) | {r['close']} | {_pct(r['pct_change'])} | "
-            f"{r['volume_ratio']:.2f} | {r['percentile']:.0f}% | {_zone_badge(r)} |"
+            f"**{emoji} {r['name']} ({r['symbol']})** · {r['close']} · {_pct(r['pct_change'])}"
         )
-    table = "\n".join(lines)
+        lines.append(
+            f"量比 {r['volume_ratio']:.2f} · 分位 {r['percentile']:.0f}% · {_zone_badge(r)}"
+        )
+        lines.append("")  # 股票之间空一行
+    table = "\n".join(lines).rstrip()
 
     # ---- 关键信号 (只列触发了信号的股票) ----
     sig_lines = []

@@ -38,6 +38,9 @@ watchlist:
     name: 紫金黄金国际
     alert_low: 0
     alert_high: 9999
+  - symbol: "06809"
+    name: 澜起科技
+    # 不设阈值: 只接收盘前简报和盘后快照, 不接收盘中价格预警
 
 analyzer:
   lookback_days: 730
