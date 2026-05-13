@@ -1,0 +1,46 @@
+market: HK
+timezone: Asia/Hong_Kong
+
+llm:
+  # deepseek-chat: 通用快(便宜)/ deepseek-reasoner: 带思考链(贵一些更智能)
+  model: deepseek-chat
+
+watchlist:
+  - symbol: "00700"
+    name: 腾讯控股
+    alert_low: 450
+    alert_high: 490
+  - symbol: "09988"
+    name: 阿里巴巴-W
+    alert_low: 118
+    alert_high: 140
+  #- symbol: "03690"
+  #  name: 美团-W
+  #  alert_low: 82
+  #  alert_high: 90
+  - symbol: "06082"
+    name: 壁仞科技
+    alert_low: 40
+    alert_high: 70
+  - symbol: "02706"
+    name: 海致科技
+    alert_low: 40
+    alert_high: 70
+  - symbol: "02628"
+    name: 中国人寿
+    alert_low: 27
+    alert_high: 34
+  - symbol: "09903"
+    name: 天数智芯
+    alert_low: 0
+    alert_high: 9999
+  - symbol: "02259"
+    name: 紫金黄金国际
+    alert_low: 0
+    alert_high: 9999
+
+analyzer:
+  lookback_days: 730
+  ma_window: 60
+  support_resistance_min_distance: 20
+  drawdown_thresholds: [0.2, 0.3, 0.5]

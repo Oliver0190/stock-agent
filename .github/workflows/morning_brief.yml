@@ -1,0 +1,25 @@
+name: Morning Brief
+
+on:
+  schedule:
+    # 港股 09:00 HKT = 01:00 UTC, 周一至周五
+    - cron: "0 1 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run morning brief
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          TZ: Asia/Hong_Kong
+          DATA_SOURCE: akshare
+        run: python -m src.jobs morning
